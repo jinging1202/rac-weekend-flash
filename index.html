@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>RAC 周末闪讯 | RAC Weekend Flash</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- html2canvas for 长图导出 -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+body {
+  background: #0f0f0f;
+  color: #f5f5f5;
+  font-family: -apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+}
+.neo-card {
+  border: 3px solid #fff;
+  box-shadow: 6px 6px 0 #ff0066;
+  background: #111;
+}
+.breath {
+  animation: breath 2s infinite;
+}
+@keyframes breath {
+  0% { box-shadow: 0 0 0 #00ffcc; }
+  50% { box-shadow: 0 0 18px #00ffcc; }
+  100% { box-shadow: 0 0 0 #00ffcc; }
+}
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 顶部 Marquee -->
+<div class="marquee bg-pink-600 text-black font-bold py-2">
+  <span>RAC WEEKEND FLASH · GLOBAL DESIGN & EDUCATION INTELLIGENCE · UPDATED WEEKLY ·</span>
+</div>
+
+<!-- Header -->
+<div class="p-4 flex justify-between items-center">
+  <div>
+    <h1 class="text-xl font-black">RAC 周末闪讯</h1>
+    <p class="text-xs opacity-70">AI-Curated Global Design & Education News</p>
+  </div>
+  <button onclick="updateNews()" class="breath px-4 py-2 bg-emerald-400 text-black font-bold neo-card">
+    点击更新
+  </button>
+</div>
+
+<!-- Search -->
+<div class="px-4 mb-3">
+  <input id="searchInput" oninput="renderList()" placeholder="搜索关键词 / Tags / 学校"
+    class="w-full p-3 bg-black border-2 border-white text-white" />
+</div>
+
+<!-- News List -->
+<div id="newsList" class="p-4 space-y-4"></div>
+
+<!-- Detail Modal -->
+<div id="detail" class="fixed inset-0 bg-black bg-opacity-95 hidden overflow-y-auto p-4 z-50"></div>
+
+<!-- Bottom CTA -->
+<a href="https://work.weixin.qq.com/kfid/kfc3dbd2c4dc22c9e4f"
+   class="fixed bottom-0 left-0 right-0 bg-pink-600 text-black font-black text-center py-4">
+  预约 1v1 专家评估
+</a>
+
+<script>
+/* =========================
+   MOCK DATA ENGINE
+   可直接替换为 Gemini / RSS / JSON
+========================= */
+
+let news = Array.from({length:30}).map((_,i)=>({
+  id:i+1,
+  category:["Global","Education","University","Design","Summer","Competitions"][Math.floor(i/5)],
+  title:`Sample News Title ${i+1}`,
+  url:"https://www.bbc.com",
+  image:`https://picsum.photos/seed/${i+10}/600/400`,
+  content:"核心关键词：全球设计、教育政策、院校动态。本条新闻概述过去一周内的重要变化。",
+  tags:["Design","教育","University"],
+  fullContent:"<p>这是 400–600 字的深度报道正文示例，用于展示完整资讯结构。</p><p>支持 HTML 排版，用于专业阅读体验。</p>",
+  analysis:"RAC 专家犀利点评：该趋势将直接影响未来两年设计与城市相关专业的申请策略，建议学生提前布局跨学科能力与实践背景。"
+}));
+
+function updateNews(){
+  alert("本 Demo 为前端可交付版本。\n后端 Gemini 抓取接口已预留，可随时接入。");
+}
+
+/* =========================
+   Render List
+========================= */
+function renderList(){
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const list = document.getElementById("newsList");
+  list.innerHTML = "";
+  news.filter(n =>
+    n.title.toLowerCase().includes(q) ||
+    n.tags.join().toLowerCase().includes(q)
+  ).forEach(n=>{
+    const div = document.createElement("div");
+    div.className="neo-card p-4";
+    div.innerHTML=`
+      <div class="text-xs opacity-60 mb-1">#${n.id} · ${n.category}</div>
+      <h3 class="font-black mb-2">${n.title}</h3>
+      <p class="text-sm opacity-80">${n.content}</p>
+      <div class="mt-2 text-xs">${n.tags.join(" · ")}</div>
+    `;
+    div.onclick=()=>openDetail(n);
+    list.appendChild(div);
+  });
+}
+
+function openDetail(n){
+  const d=document.getElementById("detail");
+  d.innerHTML=`
+    <button onclick="detail.classList.add('hidden')" class="mb-3 underline">返回</button>
+    <img src="${n.image}" class="w-full mb-4 border-4 border-white"/>
+    <h2 class="text-xl font-black mb-2">${n.title}</h2>
+    <div class="opacity-80 mb-4">${n.fullContent}</div>
+
+    <div class="neo-card p-4 mb-4">
+      <h3 class="font-black mb-2">RAC 专家犀利点评</h3>
+      <p>${n.analysis}</p>
+      <a href="https://work.weixin.qq.com/kfid/kfc3dbd2c4dc22c9e4f"
+         class="block mt-3 bg-emerald-400 text-black font-bold text-center py-2">
+        预约 1v1 评估
+      </a>
+    </div>
+
+    <a href="${n.url}" target="_blank"
+       class="block text-center bg-white text-black font-black py-3">
+      READ ORIGINAL SOURCE
+    </a>
+
+    <button onclick="exportLongImage()" class="mt-4 underline">导出长图</button>
+  `;
+  d.classList.remove("hidden");
+}
+
+function exportLongImage(){
+  html2canvas(document.body).then(canvas=>{
+    const link=document.createElement("a");
+    link.download="RAC_Weekend_Flash.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
+}
+
+renderList();
+</script>
+
+</body>
+</html>
