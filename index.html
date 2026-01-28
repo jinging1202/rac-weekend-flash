@@ -1,686 +1,449 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RAC Weekend Flash | 周末闪讯</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2canvas for Screenshot -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>RAC Weekend Flash | 周末闪讯</title>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'neo-bg': '#e0e0e0',
-                        'neo-main': '#FF4D4D', /* Hot Red */
-                        'neo-accent': '#4D79FF', /* Electric Blue */
-                        'neo-yellow': '#FFDE59', /* Warning Yellow */
-                        'neo-green': '#7DFF86', /* Neon Green */
-                        'neo-black': '#1a1a1a',
-                        'neo-white': '#ffffff',
-                    },
-                    fontFamily: {
-                        'mono': ['"Courier New"', 'Courier', 'monospace'],
-                        'sans': ['"Helvetica Neue"', 'Arial', 'sans-serif'],
-                        'display': ['Impact', 'Arial Black', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'neo': '5px 5px 0px 0px rgba(0,0,0,1)',
-                        'neo-sm': '3px 3px 0px 0px rgba(0,0,0,1)',
-                        'neo-hover': '2px 2px 0px 0px rgba(0,0,0,1)',
-                        'neo-lg': '8px 8px 0px 0px rgba(0,0,0,1)',
-                    },
-                    backgroundImage: {
-                        'stripes': 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)',
-                        'dots': 'radial-gradient(#000 1px, transparent 1px)',
-                    },
-                    animation: {
-                        'breathe-glow': 'breathe-glow 2s infinite',
-                        'slide-in': 'slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                    },
-                    keyframes: {
-                        'breathe-glow': {
-                            '0%, 100%': { boxShadow: '0 0 0 0px rgba(255, 77, 77, 0.7)' },
-                            '50%': { boxShadow: '0 0 0 10px rgba(255, 77, 77, 0)' },
-                        },
-                        'slide-in': {
-                            'from': { transform: 'translateX(-100%)' },
-                            'to': { transform: 'translateX(0)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Custom Neo-Brutalism Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f0f0f0;
-            border-left: 2px solid black;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #000;
-        }
-        
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #000;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- React -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<!-- Babel -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- Lucide -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- html2canvas -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-        /* Safe area for iPhone */
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        /* Detail Modal Typography */
-        .prose-neo h3 {
-            font-weight: 900;
-            text-transform: uppercase;
-            border-bottom: 3px solid black;
-            padding-bottom: 4px;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
-        }
-        .prose-neo p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-        .prose-neo strong {
-            background-color: #FFDE59;
-            padding: 0 4px;
-        }
-        .bg-dots-pattern {
-            background-size: 10px 10px;
-            background-image: radial-gradient(#000 1px, transparent 1px);
-        }
-    </style>
+<style>
+  /* Basic Neo-Brutalism style (kept concise) */
+  body{background:#f2f2f2;color:#111;font-family:Inter,system-ui,Arial,sans-serif;margin:0}
+  .neo-card{background:#fff;border:4px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,1)}
+  .marquee{overflow:hidden;white-space:nowrap;background:#000;color:#fff;padding:8px 0;font-weight:800}
+  .marquee > span{display:inline-block;padding-left:100%;animation:mar 20s linear infinite}
+  @keyframes mar{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .tag{display:inline-block;border:2px solid #000;padding:3px 8px;margin-right:6px;font-weight:700;font-family:monospace}
+  .shadow-neo{box-shadow:6px 6px 0 rgba(0,0,0,1)}
+  .safe-bottom{padding-bottom:env(safe-area-inset-bottom);}
+  .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .rotate-1{transform:rotate(-1deg)}
+</style>
 </head>
-<body class="bg-neo-bg text-neo-black font-sans antialiased overflow-x-hidden">
-    <div id="root"></div>
+<body>
 
-    <script type="text/babel">
-        // --- Configuration & Constants ---
-        const WECHAT_WORK_URL = "https://work.weixin.qq.com/kfid/kfc3dbd2c4dc22c9e4f";
-        
-        // UPDATED: Added Chinese names for categories
-        const CATEGORIES = [
-            { id: 'global', name: 'GLOBAL', nameCN: '国际资讯', icon: 'globe', color: 'bg-neo-yellow', style: 'flat vector illustration, minimal, bold colors, editorial design' },
-            { id: 'education', name: 'EDU', nameCN: '教育动态', icon: 'book', color: 'bg-neo-green', style: 'bauhaus geometric shapes, abstract education concept' },
-            { id: 'university', name: 'UNI', nameCN: '院校官网', icon: 'building', color: 'bg-neo-accent text-white', style: 'architectural sketch, blueprint style, minimal' },
-            { id: 'design', name: 'DESIGN', nameCN: '设计趋势', icon: 'pen-tool', color: 'bg-neo-main text-white', style: '3d render, abstract art, claymorphism, vibrant' },
-            { id: 'summer', name: 'SUMMER', nameCN: '暑期科研', icon: 'sun', color: 'bg-orange-400 text-white', style: 'summer vibes, collage art, paper cutout texture' },
-            { id: 'competitions', name: 'COMP', nameCN: '竞赛资讯', icon: 'trophy', color: 'bg-purple-400 text-white', style: 'pixel art, retro gaming aesthetic, 8-bit' }
-        ];
+<div id="root"></div>
 
-        // --- Mock Data Generator with REAL URLs & Bilingual Support ---
-        function generateMockNews() {
-            const news = [];
-            let idCounter = 1;
-            const weekOffset = 7 * 24 * 60 * 60 * 1000;
-            const now = new Date();
+<script type="text/babel">
+/* ============================
+   Helper utilities & config
+   ============================ */
 
-            // Updated templates with REAL URLs and Chinese Titles
-            const templates = {
-                global: [
-                    { title: "AI Act in EU: How it affects creative industries.", titleCN: "欧盟AI法案：如何影响创意产业", url: "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" },
-                    { title: "Apple Vision Pro adoption rates skyrocket in design studios.", titleCN: "Apple Vision Pro 在设计工作室的采用率飙升", url: "https://www.apple.com/apple-vision-pro/" },
-                    { title: "Climate change architecture symposium held in Rotterdam.", titleCN: "鹿特丹举办气候变化建筑研讨会", url: "https://www.archdaily.com/tag/climate-change" },
-                    { title: "Global remote work visa policies updated for digital nomads.", titleCN: "全球数字游民远程工作签证政策更新", url: "https://nomadlist.com/digital-nomad-visas" },
-                    { title: "NFT market crash: What's next for digital artists?", titleCN: "NFT市场崩盘：数字艺术家的下一步是什么？", url: "https://techcrunch.com/tag/nfts/" }
-                ],
-                education: [
-                    { title: "RCA announces new Digital Fashion MA program.", titleCN: "RCA 皇家艺术学院宣布新的数字时尚硕士课程", url: "https://www.rca.ac.uk/news-and-events/" },
-                    { title: "Parsons faculty strike ends with new curriculum agreement.", titleCN: "帕森斯教职工罢工结束，达成新课程协议", url: "https://www.newschool.edu/parsons/news/" },
-                    { title: "UK Student Visa fees increase by 15% effective immediately.", titleCN: "英国学生签证费用即日起上涨15%", url: "https://www.gov.uk/student-visa" },
-                    { title: "Comparison of Art School ROI: US vs UK vs Europe.", titleCN: "艺术院校投资回报率比较：美国 vs 英国 vs 欧洲", url: "https://www.qs.com/rankings/" },
-                    { title: "New generative AI tools integrated into Architectural Association courses.", titleCN: "新的生成式AI工具整合进AA建筑联盟学院课程", url: "https://www.aaschool.ac.uk/publicprogramme/whatson" }
-                ],
-                university: [
-                    { title: "UCL Bartlett releases 2026 admissions guidelines.", titleCN: "UCL 巴特莱特建筑学院发布2026招生指南", url: "https://www.ucl.ac.uk/bartlett/news" },
-                    { title: "Harvard GSD opens applications for Summer research fellows.", titleCN: "哈佛GSD开放暑期研究员申请", url: "https://www.gsd.harvard.edu/news/" },
-                    { title: "Politecnico di Milano ranks #1 in Design for 3rd year.", titleCN: "米兰理工大学连续三年设计类排名第一", url: "https://www.polimi.it/en/news" },
-                    { title: "Central Saint Martins degree show dates announced.", titleCN: "中央圣马丁毕业展日期公布", url: "https://www.arts.ac.uk/colleges/central-saint-martins/stories" },
-                    { title: "RISD creates new scholarship for international students.", titleCN: "RISD 罗德岛设计学院为国际学生设立新奖学金", url: "https://www.risd.edu/news" }
-                ],
-                design: [
-                    { title: "Interaction Design Trend: No-UI interfaces gaining traction.", titleCN: "交互设计趋势：无UI界面正在兴起", url: "https://uxdesign.cc/" },
-                    { title: "Sustainable materials: Mycelium bricks in modern housing.", titleCN: "可持续材料：现代住房中的菌丝体砖", url: "https://materialdistrict.com/" },
-                    { title: "UX/UI salaries in London vs Shanghai: 2025 Report.", titleCN: "伦敦 vs 上海 UX/UI 薪资：2025年报告", url: "https://www.glassdoor.com/Salaries/index.htm" },
-                    { title: "Why Industrial Design is merging with Biology.", titleCN: "为什么工业设计正在与生物学融合", url: "https://www.dezeen.com/design/" },
-                    { title: "Game Design: Unreal Engine 6 preview at GDC.", titleCN: "游戏设计：GDC上的虚幻引擎6预览", url: "https://www.unrealengine.com/en-US/blog" }
-                ],
-                summer: [
-                    { title: "AA Visiting School: Amazon Jungle Architecture workshop.", titleCN: "AA 访校：亚马逊丛林建筑研讨会", url: "https://www.aaschool.ac.uk/academicprogrammes/visitingschool" },
-                    { title: "Pratt Institute Summer Intensive: Visual Communication.", titleCN: "普瑞特艺术学院暑期强化班：视觉传达", url: "https://www.pratt.edu/continuing-and-professional-studies/precollege/" },
-                    { title: "CSM Summer: Experimental Typography in London.", titleCN: "CSM 暑期课程：伦敦实验排版", url: "https://www.arts.ac.uk/colleges/central-saint-martins/short-courses/summer-school" },
-                    { title: "Berkley Summer Sessions: Urban Planning & Social Justice.", titleCN: "伯克利暑期课程：城市规划与社会正义", url: "https://summer.berkeley.edu/" },
-                    { title: "Parsons Paris: Fashion Management Summer Course.", titleCN: "帕森斯巴黎：时尚管理暑期课程", url: "https://www.newschool.edu/parsons-paris/summer-programs/" }
-                ],
-                competitions: [
-                    { title: "Red Dot Award 2026: Call for entries open.", titleCN: "2026红点奖：报名开启", url: "https://www.red-dot.org/" },
-                    { title: "eVolo Skyscraper Competition winners announced.", titleCN: "eVolo 摩天大楼竞赛获奖者公布", url: "https://www.evolo.us/" },
-                    { title: "D&AD New Blood Awards: Briefs released.", titleCN: "D&AD 新血奖：简报发布", url: "https://www.dandad.org/en/d-ad-new-blood-awards/" },
-                    { title: "IF Design Student Award deadline extended.", titleCN: "IF 设计新秀奖截止日期延长", url: "https://ifdesign.com/en/if-design-student-award" },
-                    { title: "Adobe Creative Jam: UI/UX Challenge for students.", titleCN: "Adobe Creative Jam：面向学生的 UI/UX 挑战赛", url: "https://www.adobe.com/education.html" }
-                ]
-            };
+const WECHAT_WORK_URL = "https://work.weixin.qq.com/kfid/kfc3dbd2c4dc22c9e4f";
 
-            CATEGORIES.forEach(cat => {
-                for (let i = 0; i < 5; i++) {
-                    let template = templates[cat.id][i];
-                    let title, titleCN, url;
-                    
-                    if (template) {
-                        title = template.title;
-                        titleCN = template.titleCN;
-                        url = template.url;
-                    } else {
-                        title = `New update in ${cat.name}`;
-                        titleCN = `${cat.nameCN} 最新动态`;
-                        url = `https://www.google.com/search?q=${encodeURIComponent(title + " design news")}`;
-                    }
+const CATEGORIES = [
+  { id: 'global', name:'GLOBAL', nameCN:'国际资讯', styleSeed: ['#FFB6C1','#FFD700','#87CEFA'] },
+  { id: 'education', name:'EDU', nameCN:'教育动态', styleSeed: ['#7FFFD4','#FFE4B5','#DDA0DD'] },
+  { id: 'university', name:'UNI', nameCN:'院校官网', styleSeed: ['#AEDFF7','#C4F0C5','#FFF5BA'] },
+  { id: 'design', name:'DESIGN', nameCN:'设计趋势', styleSeed: ['#FF7F50','#FFD1DC','#D1C4E9'] },
+  { id: 'summer', name:'SUMMER', nameCN:'暑期科研', styleSeed: ['#FFD59A','#FFECB3','#C8E6C9'] },
+  { id: 'competitions', name:'COMP', nameCN:'竞赛资讯', styleSeed: ['#D1F2FF','#F6D6FF','#FFE8D6'] }
+];
 
-                    const date = new Date(now.getTime() - Math.random() * weekOffset);
-                    const imgUrl = `https://picsum.photos/seed/${idCounter * 123}/800/500`;
+/* 简单“机翻”函数（演示级）：替换常见短语，保留专有名词。
+   如果你需要更精确的翻译，可在后端接真翻译 API 替换此函数。 */
+function autoTranslateToChinese(en){
+  if(!en) return '';
+  const rules = [
+    ['students','学生'],
+    ['student','学生'],
+    ['applications','申请'],
+    ['application','申请'],
+    ['university','大学'],
+    ['design','设计'],
+    ['research','研究'],
+    ['climate','气候'],
+    ['urban','城市'],
+    ['AI','AI'],
+    ['sustainable','可持续'],
+    ['material','材料'],
+    ['portfolio','作品集'],
+    ['summer','暑期'],
+    ['program','项目'],
+    ['graduate','研究生'],
+    ['applicants','申请者'],
+    ['skills','技能'],
+    ['industry','行业'],
+    ['trend','趋势'],
+    ['global','全球']
+  ];
+  let zh = en;
+  rules.forEach(([e,c])=>{
+    const re = new RegExp('\\b' + e + '\\b','gi');
+    zh = zh.replace(re, c);
+  });
+  // small cleanup
+  zh = zh.replace(/\s{2,}/g,' ');
+  // wrap as sentence-like text
+  return '（自动翻译）' + zh;
+}
 
-                    news.push({
-                        id: idCounter,
-                        category: cat.id,
-                        title: title,
-                        titleCN: titleCN,
-                        summary: `核心关键词：${cat.nameCN} | 趋势 | 变革。这是一段关于 ${titleCN} 的AI生成摘要。重点在于分析该事件对全球设计教育及留学生的影响。`,
-                        // UPDATED: Bilingual Full Content
-                        fullContent: `
-                            <div class="space-y-6">
-                                <div>
-                                    <p class="font-bold text-gray-500 mb-2 font-mono text-xs">REPORT DATE: ${date.toLocaleDateString()} / LOCATION: GLOBAL</p>
-                                    <h4 class="font-black text-xl mb-3">ENGLISH BRIEF</h4>
-                                    <p class="mb-4 text-lg leading-relaxed">This development signals a significant shift in the ${cat.name} sector. Experts suggest that students preparing portfolios should pay close attention to these emerging trends.</p>
-                                    <p class="mb-4">For applicants targeting top-tier institutions like RCA, UAL, or Ivy League schools, incorporating understanding of this topic could be a differentiator.</p>
-                                    <ul class="list-disc pl-5 mb-4 space-y-2 text-sm text-gray-700">
-                                        <li>Impact on 2026 admissions criteria.</li>
-                                        <li>New skillsets required: AI collaboration, sustainable material usage.</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="border-t-2 border-black border-dashed"></div>
-                                
-                                <div class="bg-gray-100 p-5 border-l-4 border-black">
-                                    <h4 class="font-black text-xl mb-3 flex items-center gap-2">
-                                        <span class="text-neo-main">●</span> 中文深度解读
-                                    </h4>
-                                    <p class="mb-4"><strong>标题：</strong>${titleCN}</p>
-                                    <p class="mb-4 text-justify">针对 ${titleCN} 这一事件，RAC 教研组认为这标志着 ${cat.nameCN} 领域的一次重要转折。对于正在准备作品集的同学来说，理解这一趋势背后的逻辑至关重要。</p>
-                                    <p class="mb-2 font-bold">关键影响：</p>
-                                    <ul class="list-disc pl-5 mb-4 space-y-2 text-sm text-gray-800">
-                                        <li><strong>招生风向标：</strong>2026年及以后的申请可能会更看重学生对该话题的批判性思考。</li>
-                                        <li><strong>技能要求升级：</strong>建议在项目中展现对 AI 协作流程或可持续材料的实际应用能力。</li>
-                                        <li><strong>职业前景：</strong>具备此类跨学科背景的毕业生在国际就业市场上将更具竞争力。</li>
-                                    </ul>
-                                </div>
+/* 从英文摘要生成大纲（提纲）：简单分句并摘取关键词句 */
+function generateOutlineFromEnglish(en){
+  if(!en) return [];
+  // split by punctuation
+  const parts = en.split(/[\\.\\?!；；\\n]+/).map(s=>s.trim()).filter(Boolean);
+  const bullets = [];
+  for(let i=0;i<Math.min(4, parts.length); i++){
+    let line = parts[i];
+    if(line.length>80) line = line.slice(0,78)+'…';
+    bullets.push(line);
+  }
+  // ensure at least 2 bullets
+  if(bullets.length===0) bullets.push(en.slice(0,80)+'…');
+  if(bullets.length===1) bullets.push('建议：结合作品集展示相关研究或实践经验。');
+  return bullets;
+}
 
-                                <p class="mt-4 italic text-sm border-t-2 border-dashed border-gray-400 pt-4">Source: Simulated Global News Network / Official University Press.</p>
-                            </div>
-                        `,
-                        analysis: `【RAC专家犀利点评】\n针对“${cat.nameCN}”板块的这一更新，我们强烈建议申请26Fall的同学在作品集中增加相关比重。这不仅是技术层面的更新，更是设计思维的迭代。切勿盲目跟风，要结合自身背景进行差异化竞争。`,
-                        tags: [cat.nameCN, '2026趋势', '热门话题'],
-                        url: url,
-                        image: imgUrl,
-                        date: date.toISOString()
-                    });
-                    idCounter++;
-                }
-            });
+/* 生成扁平化 SVG 插画（data URL）— 根据标题和分类生成语义化几何插画 */
+function makeFlatIllustrationDataURL(title, categoryId, seed=1){
+  const cat = CATEGORIES.find(c=>c.id===categoryId) || CATEGORIES[0];
+  const palette = cat.styleSeed;
+  // pick colors deterministically
+  const c1 = palette[seed % palette.length] || palette[0];
+  const c2 = palette[(seed+1) % palette.length] || palette[1];
+  const c3 = palette[(seed+2) % palette.length] || palette[2];
+  const safeTitle = title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // simplistic scene: circle sun / rounded rectangle building / abstract shape
+  const svg = `
+    <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'>
+      <rect width='100%' height='100%' fill='${c1}'/>
+      <g transform='translate(80,60)'>
+        <rect x='60' y='220' rx='18' ry='18' width='420' height='320' fill='${c2}'/>
+        <circle cx='580' cy='120' r='80' fill='${c3}' opacity='0.95'/>
+        <rect x='520' y='320' rx='12' ry='12' width='160' height='180' fill='${c2}' opacity='0.6'/>
+        <g transform='translate(0,0)'>
+          <text x='20' y='620' font-size='36' fill='#111' font-weight='700' font-family='sans-serif'>${safeTitle}</text>
+        </g>
+      </g>
+    </svg>
+  `;
+  const encoded = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  return encoded;
+}
 
-            return news.sort((a, b) => a.id - b.id);
-        }
+/* 智能推荐对象：根据当前时间判断最合适的申请/行动对象（示例逻辑，可调整） */
+function getAudienceRecommendation(){
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // 1-12
+  // Common admissions rhythm: Sept-Dec application prep, Dec-Jan deadlines for many programs
+  // If current month is Jan-Feb (申请季末/结果期)，就不建议本年度Fall（e.g., 26Fall），而建议下一周期或补强路径
+  if(month === 12 || month === 1 || month === 2){
+    return {
+      label: `适合对象：${year+1}Fall（下一周期）与正在寻求短期强化/暑期科研的学生`,
+      rationale: `当前为 ${year} 年末至 ${year+1} 年初，绝大多数${year}Fall申请季已进入结果或结束阶段。建议把重点放在为 ${year+1}Fall 做准备、补强技能与暑期研究项目。`
+    };
+  } else if(month >=3 && month <=6){
+    return {
+      label: `适合对象：正在准备${year}年暑期科研 / 立刻补强作品集的学生`,
+      rationale: `春季至初夏是参加暑期科研、实习、以及作品集改写的最佳窗口期，可为下一轮申请打基础。`
+    };
+  } else {
+    return {
+      label: `适合对象：准备 ${year}Fall 或 ${year+1}Fall 的申请者`,
+      rationale: `上半年至秋季是申请准备关键期，请合理安排作品、研究与推荐信时间表。`
+    };
+  }
+}
 
-        // --- Components ---
+/* ============================
+   Mock data generator (30 items, 6×5)
+   ============================ */
 
-        function Icon({ name, size = 20, className }) {
-            React.useEffect(() => {
-                lucide.createIcons();
-            }, [name]);
-            return <i data-lucide={name} width={size} height={size} className={className}></i>;
-        }
+function generateMockNews() {
+  const templates = {
+    global: [
+      { title: "AI Act in EU: How it affects creative industries.", titleCN: "欧盟AI法案：如何影响创意产业", url: "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" },
+      { title: "Apple Vision Pro adoption rates skyrocket in design studios.", titleCN: "Apple Vision Pro 在设计工作室的采用率飙升", url: "https://www.apple.com/apple-vision-pro/" },
+      { title: "Climate change architecture symposium held in Rotterdam.", titleCN: "鹿特丹举办气候变化建筑研讨会", url: "https://www.archdaily.com/tag/climate-change" },
+      { title: "Global remote work visa policies updated for digital nomads.", titleCN: "全球数字游民远程工作签证政策更新", url: "https://nomadlist.com/digital-nomad-visas" },
+      { title: "NFT market crash: What's next for digital artists?", titleCN: "NFT市场崩盘：数字艺术家的下一步是什么？", url: "https://techcrunch.com/tag/nfts/" }
+    ],
+    education: [
+      { title: "RCA announces new Digital Fashion MA program.", titleCN: "RCA 皇家艺术学院宣布新的数字时尚硕士课程", url: "https://www.rca.ac.uk/news-and-events/" },
+      { title: "Parsons faculty strike ends with new curriculum agreement.", titleCN: "帕森斯教职工罢工结束，达成新课程协议", url: "https://www.newschool.edu/parsons/news/" },
+      { title: "UK Student Visa fees increase by 15% effective immediately.", titleCN: "英国学生签证费用即日起上涨15%", url: "https://www.gov.uk/student-visa" },
+      { title: "Comparison of Art School ROI: US vs UK vs Europe.", titleCN: "艺术院校投资回报率比较：美国 vs 英国 vs 欧洲", url: "https://www.qs.com/rankings/" },
+      { title: "New generative AI tools integrated into Architectural Association courses.", titleCN: "新的生成式AI工具整合进AA建筑联盟学院课程", url: "https://www.aaschool.ac.uk/publicprogramme/whatson" }
+    ],
+    university: [
+      { title: "UCL Bartlett releases 2026 admissions guidelines.", titleCN: "UCL 巴特莱特建筑学院发布2026招生指南", url: "https://www.ucl.ac.uk/bartlett/news" },
+      { title: "Harvard GSD opens applications for Summer research fellows.", titleCN: "哈佛GSD开放暑期研究员申请", url: "https://www.gsd.harvard.edu/news/" },
+      { title: "Politecnico di Milano ranks #1 in Design for 3rd year.", titleCN: "米兰理工大学连续三年设计类排名第一", url: "https://www.polimi.it/en/news" },
+      { title: "Central Saint Martins degree show dates announced.", titleCN: "中央圣马丁毕业展日期公布", url: "https://www.arts.ac.uk/colleges/central-saint-martins/stories" },
+      { title: "RISD creates new scholarship for international students.", titleCN: "RISD 罗德岛设计学院为国际学生设立新奖学金", url: "https://www.risd.edu/news" }
+    ],
+    design: [
+      { title: "Interaction Design Trend: No-UI interfaces gaining traction.", titleCN: "交互设计趋势：无UI界面正在兴起", url: "https://uxdesign.cc/" },
+      { title: "Sustainable materials: Mycelium bricks in modern housing.", titleCN: "可持续材料：现代住房中的菌丝体砖", url: "https://materialdistrict.com/" },
+      { title: "UX/UI salaries in London vs Shanghai: 2025 Report.", titleCN: "伦敦 vs 上海 UX/UI 薪资：2025年报告", url: "https://www.glassdoor.com/Salaries/index.htm" },
+      { title: "Why Industrial Design is merging with Biology.", titleCN: "为什么工业设计正在与生物学融合", url: "https://www.dezeen.com/design/" },
+      { title: "Game Design: Unreal Engine 6 preview at GDC.", titleCN: "游戏设计：GDC上的虚幻引擎6预览", url: "https://www.unrealengine.com/en-US/blog" }
+    ],
+    summer: [
+      { title: "AA Visiting School: Amazon Jungle Architecture workshop.", titleCN: "AA 访校：亚马逊丛林建筑研讨会", url: "https://www.aaschool.ac.uk/academicprogrammes/visitingschool" },
+      { title: "Pratt Institute Summer Intensive: Visual Communication.", titleCN: "普瑞特艺术学院暑期强化班：视觉传达", url: "https://www.pratt.edu/continuing-and-professional-studies/precollege/" },
+      { title: "CSM Summer: Experimental Typography in London.", titleCN: "CSM 暑期课程：伦敦实验排版", url: "https://www.arts.ac.uk/colleges/central-saint-martins/short-courses/summer-school" },
+      { title: "Berkley Summer Sessions: Urban Planning & Social Justice.", titleCN: "伯克利暑期课程：城市规划与社会正义", url: "https://summer.berkeley.edu/" },
+      { title: "Parsons Paris: Fashion Management Summer Course.", titleCN: "帕森斯巴黎：时尚管理暑期课程", url: "https://www.newschool.edu/parsons-paris/summer-programs/" }
+    ],
+    competitions: [
+      { title: "Red Dot Award 2026: Call for entries open.", titleCN: "2026红点奖：报名开启", url: "https://www.red-dot.org/" },
+      { title: "eVolo Skyscraper Competition winners announced.", titleCN: "eVolo 摩天大楼竞赛获奖者公布", url: "https://www.evolo.us/" },
+      { title: "D&AD New Blood Awards: Briefs released.", titleCN: "D&AD 新血奖：简报发布", url: "https://www.dandad.org/en/d-ad-new-blood-awards/" },
+      { title: "IF Design Student Award deadline extended.", titleCN: "IF 设计新秀奖截止日期延长", url: "https://ifdesign.com/en/if-design-student-award" },
+      { title: "Adobe Creative Jam: UI/UX Challenge for students.", titleCN: "Adobe Creative Jam：面向学生的 UI/UX 挑战赛", url: "https://www.adobe.com/education.html" }
+    ]
+  };
 
-        function Tag({ text, invert = false }) {
-            return (
-                <span className={`inline-block border-2 border-black px-2 py-0.5 text-xs font-mono mr-2 mb-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${invert ? 'bg-black text-white' : 'bg-white text-black'}`}>
-                    #{text}
-                </span>
-            );
-        }
+  const cats = ['global','education','university','design','summer','competitions'];
+  const news = [];
+  let id = 1;
+  const now = new Date();
+  const weekMillis = 7*24*3600*1000;
+  cats.forEach(catId => {
+    for(let i=0;i<5;i++){
+      const t = templates[catId][i];
+      const published = new Date(now.getTime() - Math.floor(Math.random()*weekMillis));
+      const engBrief = `${t.title} This development signals evolving priorities in the sector and suggests applicants should adapt portfolios and research focus accordingly.`;
+      const chineseAuto = autoTranslateToChinese(engBrief);
+      const outline = generateOutlineFromEnglish(engBrief);
+      const analysisAudience = getAudienceRecommendation();
+      const analysis = `【RAC专家犀利点评】\n${t.titleCN} — 建议对象：${analysisAudience.label}\n要点：请关注跨学科研究与可持续实践在作品集中的体现。`;
+      const image = makeFlatIllustrationDataURL(t.title, catId, id);
+      news.push({
+        id:id,
+        category: catId,
+        title: t.title,
+        titleCN: t.titleCN,
+        summary: `核心关键词：${t.titleCN} | 趋势提示。该条摘要由 RAC 编辑处理。`,
+        englishBrief: engBrief,
+        chineseTranslation: chineseAuto,
+        outline: outline,
+        fullContent: `
+          <div>
+            <p style="color:#666;font-size:12px;">REPORT DATE: ${published.toISOString().slice(0,10)}</p>
+            <h4 style="font-weight:800;margin:12px 0 8px 0;">ENGLISH BRIEF</h4>
+            <p>${engBrief}</p>
+            <h4 style="font-weight:800;margin:10px 0 8px 0;">中文自动翻译</h4>
+            <p>${chineseAuto}</p>
+            <h4 style="font-weight:800;margin:10px 0 8px 0;">详细内容提纲（提纲）</h4>
+            <ul style="margin-left:16px;">
+              ${outline.map(ol=>`<li>${ol}</li>`).join('')}
+            </ul>
+            <div style="margin-top:12px;color:#999;font-size:12px;">Source: ${t.url}</div>
+          </div>
+        `,
+        analysis: analysis,
+        tags: [CATEGORIES.find(c=>c.id===catId).nameCN, '趋势', '申请建议'],
+        url: t.url,
+        image: image,
+        date: published.toISOString()
+      });
+      id++;
+    }
+  });
 
-        // Sidebar Component
-        function Sidebar({ isOpen, onClose, activeCategory, onSelectCategory }) {
-            return (
-                <>
-                    {/* Backdrop */}
-                    {isOpen && (
-                        <div className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" onClick={onClose}></div>
-                    )}
-                    {/* Sidebar Panel */}
-                    <div className={`fixed top-0 left-0 h-full w-3/4 max-w-xs bg-neo-white border-r-4 border-black z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto`}>
-                        <div className="p-4 border-b-4 border-black bg-black text-white flex justify-between items-center">
-                            <span className="font-black text-xl italic">MENU / 菜单</span>
-                            <button onClick={onClose}>
-                                <Icon name="x" size={24} className="text-white" />
-                            </button>
-                        </div>
-                        
-                        <div className="p-6">
-                            <div className="mb-8">
-                                <h3 className="font-mono font-bold text-gray-400 mb-4 border-b-2 border-gray-300 pb-1">SECTIONS / 分类</h3>
-                                <button 
-                                    onClick={() => { onSelectCategory('all'); onClose(); }}
-                                    className={`block w-full text-left font-black text-xl mb-4 hover:text-neo-main transition-colors ${activeCategory === 'all' ? 'text-neo-main underline' : 'text-black'}`}
-                                >
-                                    ALL NEWS (全部)
-                                </button>
-                                {CATEGORIES.map(cat => (
-                                    <button 
-                                        key={cat.id}
-                                        onClick={() => { onSelectCategory(cat.id); onClose(); }}
-                                        className={`block w-full text-left font-bold text-lg mb-4 hover:text-neo-main transition-colors ${activeCategory === cat.id ? 'text-neo-main underline' : 'text-black'}`}
-                                    >
-                                        <span className="block font-black text-xl uppercase">{cat.name}</span>
-                                        <span className="text-sm font-normal text-gray-600">{cat.nameCN}</span>
-                                    </button>
-                                ))}
-                            </div>
+  return news.sort((a,b)=>a.id-b.id);
+}
 
-                            <div className="mb-8">
-                                <h3 className="font-mono font-bold text-gray-400 mb-4 border-b-2 border-gray-300 pb-1">ARCHIVES / 归档</h3>
-                                <div className="space-y-3 font-mono font-bold">
-                                    <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                                        <span>JAN 2026 (1月)</span>
-                                        <Icon name="lock" size={14} />
-                                    </div>
-                                    <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                                        <span>DEC 2025 (12月)</span>
-                                        <Icon name="lock" size={14} />
-                                    </div>
-                                    <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                                        <span>NOV 2025 (11月)</span>
-                                        <Icon name="lock" size={14} />
-                                    </div>
-                                </div>
-                            </div>
+/* ============================
+   Small UI Components
+   ============================ */
 
-                             <div className="bg-neo-yellow border-2 border-black p-4 shadow-neo-sm">
-                                <h4 className="font-bold text-sm mb-2">NEED HELP? / 遇到问题？</h4>
-                                <p className="text-xs mb-3 font-mono">Book a session with our portfolio experts.<br/>预约作品集专家咨询。</p>
-                                <a href={WECHAT_WORK_URL} className="block w-full bg-black text-white text-center py-2 font-bold text-xs hover:bg-white hover:text-black hover:border-black border-2 border-transparent transition-all">
-                                    CONTACT SUPPORT / 联系客服
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            );
-        }
+function Icon({name, size=18}) {
+  React.useEffect(()=>{ lucide.createIcons(); },[]);
+  return <i data-lucide={name} style={{width:size, height:size}}></i>;
+}
 
-        function NewsCard({ item, onClick, categoryColor }) {
-            return (
-                <div 
-                    onClick={onClick}
-                    className="bg-white border-4 border-black p-0 mb-6 shadow-neo active:translate-x-1 active:translate-y-1 active:shadow-none transition-all cursor-pointer relative overflow-hidden group flex flex-col h-full"
-                >
-                    <div className="relative h-48 w-full overflow-hidden border-b-4 border-black bg-gray-200">
-                        <img 
-                            src={item.image} 
-                            alt={item.title} 
-                            className="w-full h-full object-cover transition-all duration-500 transform group-hover:scale-105"
-                            loading="lazy"
-                        />
-                        <div className={`absolute top-0 left-0 ${categoryColor} px-3 py-1 border-r-4 border-b-4 border-black font-black text-sm tracking-tighter`}>
-                            #{item.id.toString().padStart(2, '0')}
-                        </div>
-                    </div>
-                    <div className="p-4 flex-grow flex flex-col justify-between">
-                        <div>
-                            <div className="flex flex-wrap mb-3 gap-1">
-                                {item.tags.slice(0, 2).map((t, i) => <Tag key={i} text={t} />)}
-                            </div>
-                            <h3 className="font-black text-xl leading-tight mb-1 uppercase hover:text-neo-accent line-clamp-2">{item.title}</h3>
-                            <h4 className="font-bold text-sm text-gray-800 mb-3 line-clamp-2 border-l-4 border-neo-yellow pl-2">{item.titleCN}</h4>
-                            
-                            <p className="text-sm text-gray-600 font-mono line-clamp-2 leading-tight">{item.summary.split('。')[0]}...</p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t-2 border-black flex justify-between items-center">
-                            <span className="text-xs font-bold bg-black text-white px-2 py-0.5">{item.date.split('T')[0]}</span>
-                            <div className="w-6 h-6 rounded-full bg-neo-main border-2 border-black flex items-center justify-center group-hover:bg-neo-yellow transition-colors">
-                                <Icon name="arrow-right" size={14} className="text-white group-hover:text-black" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+function Tag({text, invert=false}) {
+  return <span className="tag" style={{background: invert ? '#111' : '#fff', color: invert ? '#fff' : '#111'}}>{text}</span>
+}
 
-        function DetailModal({ item, onClose, categoryColor }) {
-            if (!item) return null;
+/* News card component */
+function NewsCard({item, onOpen}) {
+  const cat = CATEGORIES.find(c=>c.id===item.category);
+  return (
+    <div className="neo-card shadow-neo p-0 overflow-hidden cursor-pointer" onClick={()=>onOpen(item)}>
+      <div style={{height:180,overflow:'hidden'}} className="relative">
+        <img src={item.image} alt={item.title} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+        <div style={{position:'absolute',left:8,top:8,background:'#fff',padding:'6px 10px',border:'3px solid #000',fontWeight:800}}>{`#${String(item.id).padStart(2,'0')}`}</div>
+      </div>
+      <div style={{padding:16}}>
+        <div style={{marginBottom:8}}>
+          {item.tags.slice(0,2).map((t,i)=> <Tag key={i} text={t} />)}
+        </div>
+        <h3 style={{fontWeight:900,fontSize:18,margin:'6px 0'}} className="line-clamp-2">{item.title}</h3>
+        <h4 style={{fontWeight:700,color:'#444',margin:'6px 0'}}>{item.titleCN}</h4>
+        <p style={{color:'#666',fontFamily:'monospace'}} className="line-clamp-2">{item.summary}</p>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
+          <div style={{fontSize:12,fontWeight:800,background:'#000',color:'#fff',padding:'6px 8px'}}>{item.date.slice(0,10)}</div>
+          <div style={{width:36,height:36,background:'#ff4d4d',border:'3px solid #000',display:'flex',alignItems:'center',justifyContent:'center'}}><Icon name="arrow-right" /></div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-            return (
-                <div className="fixed inset-0 z-50 overflow-hidden bg-neo-bg bg-opacity-95 backdrop-blur-sm flex justify-center animate-fade-in">
-                    <div className="bg-white w-full max-w-2xl h-full md:h-[90vh] md:my-auto md:border-4 md:border-black md:shadow-neo relative flex flex-col overflow-hidden">
-                        
-                        <div className="bg-white border-b-4 border-black flex justify-between items-center p-3 shrink-0 z-20">
-                            <div className="flex items-center gap-2">
-                                <span className={`inline-block px-2 py-1 border-2 border-black font-black text-sm ${categoryColor}`}>
-                                    {item.category.toUpperCase()}
-                                </span>
-                                <span className="font-mono font-bold text-gray-500">#{item.id.toString().padStart(2, '0')}</span>
-                            </div>
-                            <button onClick={onClose} className="bg-black text-white border-2 border-transparent hover:bg-neo-main hover:border-black transition-colors p-1">
-                                <Icon name="x" size={24} />
-                            </button>
-                        </div>
+/* Detail modal */
+function DetailModal({item, onClose}) {
+  if(!item) return null;
+  // Audience suggestion computed live
+  const audience = getAudienceRecommendation();
 
-                        <div className="flex-grow overflow-y-auto overflow-x-hidden bg-white">
-                            <div className="relative w-full h-56 md:h-72 border-b-4 border-black shrink-0">
-                                <img src={item.image} className="w-full h-full object-cover" alt="Detail" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
-                            </div>
-                            
-                            <div className="p-5 md:p-8">
-                                <div className="mb-6 border-b-4 border-black pb-6">
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {item.tags.map((t,i) => <Tag key={i} text={t} invert={true} />)}
-                                    </div>
-                                    <h1 className="text-2xl md:text-3xl font-black uppercase leading-none tracking-tight mb-2">{item.title}</h1>
-                                    <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">{item.titleCN}</h2>
-                                    <div className="flex items-center text-xs font-mono text-gray-500 mt-2">
-                                        <Icon name="clock" size={12} className="mr-1" />
-                                        <span>PUBLISHED: {item.date.split('T')[0]}</span>
-                                        <span className="mx-2">|</span>
-                                        <span>READ TIME: 2 MIN</span>
-                                    </div>
-                                </div>
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(0,0,0,0.6)'}}>
+      <div style={{width:'94%',maxWidth:900,height:'94%',background:'#fff',border:'6px solid #000',overflowY:'auto',position:'relative'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:12,borderBottom:'4px solid #000'}}>
+          <div>
+            <div style={{fontWeight:900}}>{item.title}</div>
+            <div style={{color:'#777'}}>{item.titleCN}</div>
+          </div>
+          <div>
+            <button onClick={onClose} style={{padding:'8px 12px',border:'2px solid #000',background:'#111',color:'#fff',fontWeight:800}}>关闭</button>
+          </div>
+        </div>
 
-                                <div className="prose-neo font-mono text-neo-black mb-10" dangerouslySetInnerHTML={{ __html: item.fullContent }}></div>
+        <div>
+          <div style={{height:300,overflow:'hidden'}}>
+            <img src={item.image} alt="illustration" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+          </div>
 
-                                <a href={item.url} target="_blank" className="flex items-center justify-center w-full border-2 border-black py-4 font-black text-lg bg-gray-100 hover:bg-black hover:text-white transition-all shadow-neo-sm mb-10 group">
-                                    <Icon name="link" size={20} className="mr-2" />
-                                    READ ORIGINAL SOURCE / 阅读原文
-                                    <Icon name="external-link" size={16} className="ml-2 opacity-50 group-hover:opacity-100" />
-                                </a>
+          <div style={{padding:18}}>
+            {/* Tags */}
+            <div style={{marginBottom:12}}>{item.tags.map((t,i)=><Tag key={i} text={t} invert={true} />)}</div>
 
-                                <div className="relative mb-12 mx-1">
-                                    <div className="absolute inset-0 bg-neo-black transform translate-x-2 translate-y-2"></div>
-                                    <div className="relative bg-neo-yellow border-4 border-black p-0 overflow-hidden">
-                                        <div className="bg-black text-white p-3 flex justify-between items-center border-b-4 border-black">
-                                            <div className="flex items-center gap-2">
-                                                <div className="bg-neo-main rounded-full p-1 border border-white">
-                                                    <Icon name="zap" size={14} className="text-white" />
-                                                </div>
-                                                <span className="font-bold tracking-wider">RAC INSIGHT</span>
-                                            </div>
-                                            <div className="flex gap-1">
-                                                <div className="w-2 h-2 rounded-full bg-white"></div>
-                                                <div className="w-2 h-2 rounded-full bg-white"></div>
-                                                <div className="w-2 h-2 rounded-full bg-white"></div>
-                                            </div>
-                                        </div>
-                                        <div className="p-5 bg-dots-pattern">
-                                            <div className="bg-white border-2 border-black p-4 shadow-sm rotate-1">
-                                                <div className="flex items-start gap-4 mb-3 border-b-2 border-dashed border-gray-300 pb-3">
-                                                    <div className="w-12 h-12 bg-gray-200 border-2 border-black rounded-full overflow-hidden shrink-0">
-                                                        <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=RACExpert${item.id}&backgroundColor=transparent`} alt="Expert" />
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-bold text-lg leading-none mb-1">RAC 资深导师</h4>
-                                                        <span className="text-xs font-mono text-gray-500 uppercase">Portfolio Strategy Director</span>
-                                                    </div>
-                                                </div>
-                                                <p className="text-sm font-bold text-neo-black leading-relaxed whitespace-pre-line text-justify">
-                                                    {item.analysis}
-                                                </p>
-                                            </div>
-                                            <div className="mt-4 text-center">
-                                                 <p className="text-xs font-mono font-bold mb-2 uppercase tracking-widest">Does this affect your application?</p>
-                                                 <Icon name="arrow-down" size={20} className="mx-auto animate-bounce" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            {/* English brief */}
+            <h3 style={{fontWeight:900}}>ENGLISH BRIEF</h3>
+            <p style={{color:'#333',lineHeight:1.6}}>{item.englishBrief}</p>
 
-                        <div className="bg-white border-t-4 border-black p-4 shrink-0 safe-bottom shadow-[0_-5px_15px_rgba(0,0,0,0.1)] flex gap-3">
-                            <button onClick={onClose} className="flex-1 py-3 border-2 border-black font-bold text-sm bg-gray-100 hover:bg-gray-200 active:scale-95 transition-transform">
-                                CLOSE / 关闭
-                            </button>
-                            <a href={WECHAT_WORK_URL} className="flex-[2] py-3 border-2 border-black font-bold text-sm bg-neo-main text-white shadow-neo-sm hover:translate-y-0.5 hover:shadow-none active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <Icon name="message-circle" size={18} />
-                                立即咨询专家 (1v1)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+            {/* Chinese translation (auto) */}
+            <h3 style={{fontWeight:900,marginTop:18}}>中文翻译（自动）</h3>
+            <p style={{color:'#333',lineHeight:1.6}}>{item.chineseTranslation}</p>
 
-        function MainApp() {
-            const [newsData, setNewsData] = React.useState([]);
-            const [loading, setLoading] = React.useState(true);
-            const [activeCategory, setActiveCategory] = React.useState('all');
-            const [searchQuery, setSearchQuery] = React.useState('');
-            const [selectedItem, setSelectedItem] = React.useState(null);
-            const [sidebarOpen, setSidebarOpen] = React.useState(false);
-            const contentRef = React.useRef(null);
+            {/* Outline */}
+            <h3 style={{fontWeight:900,marginTop:18}}>详细内容提纲</h3>
+            <ul style={{paddingLeft:18,color:'#333',lineHeight:1.6}}>
+              {item.outline.map((o,idx)=><li key={idx}>{o}</li>)}
+            </ul>
 
-            React.useEffect(() => {
-                setTimeout(() => {
-                    const data = generateMockNews();
-                    setNewsData(data);
-                    setLoading(false);
-                }, 1500);
-            }, []);
+            {/* RAC Insight with dynamic audience suggestion */}
+            <div style={{marginTop:22,border:'3px dashed #000',padding:12,background:'#fff'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                <div style={{fontWeight:900}}>RAC INSIGHT</div>
+                <div style={{fontSize:12,color:'#666'}}>智能建议 · 根据当前时间自动判断目标群体</div>
+              </div>
+              <div style={{background:'#ffefc2',padding:12,border:'3px solid #000'}}>
+                <div style={{fontWeight:800}}>{audience.label}</div>
+                <div style={{marginTop:8,color:'#444'}}>{audience.rationale}</div>
+                <div style={{marginTop:12,fontWeight:800}}>针对性建议：</div>
+                <ul style={{marginLeft:18}}>
+                  <li>将该主题作为作品集研究章节，呈现研究问题与方法。</li>
+                  <li>若本年度申请已结束（例如 26Fall），建议转向暑期科研或为下一周期做长线准备。</li>
+                  <li>提升与该主题相关的可量化技能（例如数据分析、材料实验、可持续评估）。</li>
+                </ul>
+              </div>
+            </div>
 
-            const filteredNews = React.useMemo(() => {
-                return newsData.filter(item => {
-                    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-                    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                          item.titleCN.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                          item.summary.toLowerCase().includes(searchQuery.toLowerCase());
-                    return matchesCategory && matchesSearch;
-                });
-            }, [newsData, activeCategory, searchQuery]);
+            {/* Analysis / CTA */}
+            <div style={{marginTop:18,display:'flex',gap:12}}>
+              <div style={{flex:1,background:'#f5f5f5',padding:12,border:'3px solid #000'}}>
+                <div style={{fontWeight:900,marginBottom:8}}>RAC 专家犀利点评</div>
+                <div style={{whiteSpace:'pre-line',color:'#333'}}>{item.analysis}</div>
+              </div>
+              <div style={{width:220}}>
+                <a href={WECHAT_WORK_URL} target="_blank" style={{display:'block',textAlign:'center',padding:12,fontWeight:900,background:'#ff4d4d',color:'#fff',border:'3px solid #000'}}>预约 1v1 专家评估</a>
+                <a href={item.url} target="_blank" style={{display:'block',textAlign:'center',padding:12,fontWeight:800,marginTop:8,border:'3px solid #000'}}>阅读原文</a>
+              </div>
+            </div>
 
-            const handleExport = async () => {
-                if (!contentRef.current) return;
-                try {
-                    const canvas = await html2canvas(contentRef.current, {
-                        useCORS: true,
-                        scrollY: -window.scrollY,
-                        backgroundColor: '#e0e0e0'
-                    });
-                    const link = document.createElement('a');
-                    link.download = `RAC-Flash-${new Date().toISOString().slice(0,10)}.png`;
-                    link.href = canvas.toDataURL();
-                    link.click();
-                } catch (err) {
-                    console.error("Export failed", err);
-                    alert("Export failed.");
-                }
-            };
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-            const refreshData = () => {
-                setLoading(true);
-                setTimeout(() => {
-                    setNewsData(generateMockNews());
-                    setLoading(false);
-                }, 1000);
-            }
+/* ============================
+   App Root
+   ============================ */
 
-            return (
-                <div className="min-h-screen pb-20 relative">
-                    
-                    <div className="bg-black text-white font-mono text-sm py-2 border-b-4 border-neo-main marquee-container sticky top-0 z-30">
-                        <div className="marquee-content">
-                            RAC WEEKEND FLASH /// DESIGN EDUCATION /// GLOBAL TRENDS /// UPDATE: {new Date().toLocaleDateString()} /// AI GENERATED CONTENT /// CLICK TO CONSULT /// 
-                            RAC WEEKEND FLASH /// DESIGN EDUCATION /// GLOBAL TRENDS /// UPDATE: {new Date().toLocaleDateString()} /// AI GENERATED CONTENT /// CLICK TO CONSULT /// 
-                        </div>
-                    </div>
+function App(){
+  const [news, setNews] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [activeCategory, setActiveCategory] = React.useState('all');
+  const [query, setQuery] = React.useState('');
+  const [selected, setSelected] = React.useState(null);
 
-                    <div className="p-4 bg-white border-b-4 border-black">
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-3">
-                                <button onClick={() => setSidebarOpen(true)} className="p-1 border-2 border-black hover:bg-black hover:text-white transition-colors">
-                                    <Icon name="menu" size={28} />
-                                </button>
-                                <h1 className="text-4xl font-black italic tracking-tighter">RAC<span className="text-neo-main">FLASH</span></h1>
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={refreshData} className="p-2 border-2 border-black bg-neo-green shadow-neo-sm hover:translate-y-1 hover:shadow-none transition-all" title="Refresh">
-                                    <Icon name="refresh-cw" size={20} />
-                                </button>
-                                <button onClick={handleExport} className="p-2 border-2 border-black bg-neo-yellow shadow-neo-sm hover:translate-y-1 hover:shadow-none transition-all" title="Export">
-                                    <Icon name="download" size={20} />
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="relative">
-                            <input 
-                                type="text" 
-                                placeholder="SEARCH TRENDS... / 搜索资讯..." 
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-neo-bg border-2 border-black p-3 pl-10 font-mono focus:outline-none focus:bg-white focus:shadow-neo transition-all"
-                            />
-                            <div className="absolute left-3 top-3.5">
-                                <Icon name="search" size={18} className="text-gray-500" />
-                            </div>
-                        </div>
-                    </div>
+  React.useEffect(()=>{
+    setTimeout(()=>{
+      const d = generateMockNews();
+      setNews(d);
+      setLoading(false);
+    }, 900);
+  },[]);
 
-                    <div className="overflow-x-auto whitespace-nowrap p-4 bg-white border-b-4 border-black sticky top-[42px] z-20 shadow-lg">
-                         <button 
-                            onClick={() => setActiveCategory('all')}
-                            className={`inline-flex items-center px-4 py-2 border-2 border-black mr-3 font-bold text-sm transition-all transform hover:-translate-y-1 ${activeCategory === 'all' ? 'bg-black text-white shadow-neo-sm' : 'bg-white hover:bg-gray-100 hover:shadow-neo-sm'}`}
-                        >
-                            ALL
-                        </button>
-                        {CATEGORIES.map(cat => (
-                            <button 
-                                key={cat.id}
-                                onClick={() => setActiveCategory(cat.id)}
-                                className={`inline-flex items-center px-4 py-2 border-2 border-black mr-3 font-bold text-sm transition-all transform hover:-translate-y-1 ${activeCategory === cat.id ? `${cat.color} text-black shadow-neo-sm` : 'bg-white hover:bg-gray-100 hover:shadow-neo-sm'}`}
-                            >
-                                <span className="mr-2"><Icon name={cat.icon} size={14} /></span>
-                                {cat.name}
-                            </button>
-                        ))}
-                    </div>
+  const filtered = news.filter(n=>{
+    const inCategory = activeCategory==='all' ? true : n.category===activeCategory;
+    const inQuery = !query ? true : (n.title.toLowerCase().includes(query.toLowerCase()) || (n.titleCN && n.titleCN.includes(query)));
+    return inCategory && inQuery;
+  });
 
-                    <div ref={contentRef} className="p-4 bg-neo-bg min-h-screen">
-                        {loading ? (
-                            <div className="flex flex-col items-center justify-center h-64">
-                                <div className="loader mb-4"></div>
-                                <p className="font-mono text-sm animate-pulse">AI AGENT CRAWLING DATA... / 获取数据中...</p>
-                                <p className="text-xs text-gray-500">Retrieving from Global Sources</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredNews.length > 0 ? (
-                                    filteredNews.map(item => (
-                                        <NewsCard 
-                                            key={item.id} 
-                                            item={item} 
-                                            onClick={() => setSelectedItem(item)}
-                                            categoryColor={CATEGORIES.find(c => c.id === item.category)?.color || 'bg-white'}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="col-span-full text-center py-20 font-mono text-gray-500">
-                                        NO DATA FOUND IN THIS SECTOR.
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        
-                        <div className="mt-8 pt-8 border-t-4 border-gray-300 text-center text-xs font-mono text-gray-500 pb-20">
-                            <p>POWERED BY GEMINI AI & RAC STUDIO</p>
-                            <p>© 2026 RAC WEEKEND FLASH. ALL RIGHTS RESERVED.</p>
-                        </div>
-                    </div>
+  return (
+    <div>
+      <div className="marquee"><span>RAC WEEKEND FLASH · GLOBAL DESIGN & EDUCATION · {new Date().toLocaleDateString()} ·</span></div>
 
-                    {selectedItem && (
-                        <DetailModal 
-                            item={selectedItem} 
-                            onClose={() => setSelectedItem(null)} 
-                            categoryColor={CATEGORIES.find(c => c.id === selectedItem.category)?.color}
-                        />
-                    )}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:16,background:'#fff',borderBottom:'4px solid #000'}}>
+        <div>
+          <div style={{fontSize:28,fontWeight:900}}>RAC <span style={{color:'#ff4d4d'}}>FLASH</span></div>
+          <div style={{color:'#666'}}>Weekly curation · Design & Education</div>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button onClick={()=>{ setLoading(true); setTimeout(()=>{ setNews(generateMockNews()); setLoading(false); },900); }} style={{padding:'8px 12px',border:'3px solid #000',background:'#fff',fontWeight:800}}>更新</button>
+          <button onClick={() => {
+            // export full page screenshot
+            html2canvas(document.body).then(c=>{ const a=document.createElement('a'); a.href=c.toDataURL(); a.download=`RAC-Flash-${new Date().toISOString().slice(0,10)}.png`; a.click(); });
+          }} style={{padding:'8px 12px',border:'3px solid #000',background:'#ffde59',fontWeight:800}}>导出长图</button>
+        </div>
+      </div>
 
-                    <Sidebar 
-                        isOpen={sidebarOpen} 
-                        onClose={() => setSidebarOpen(false)} 
-                        activeCategory={activeCategory}
-                        onSelectCategory={setActiveCategory}
-                    />
+      <div style={{padding:12,background:'#fff',borderBottom:'4px solid #000',display:'flex',gap:12,alignItems:'center'}}>
+        <input placeholder="搜索：院校 / 关键词 / 主题" value={query} onChange={(e)=>setQuery(e.target.value)} style={{flex:1,padding:10,border:'3px solid #000'}} />
+        <select value={activeCategory} onChange={(e)=>setActiveCategory(e.target.value)} style={{padding:10,border:'3px solid #000'}}>
+          <option value="all">ALL</option>
+          {CATEGORIES.map(c=> <option key={c.id} value={c.id}>{c.name} · {c.nameCN}</option>)}
+        </select>
+      </div>
 
-                    {!selectedItem && (
-                        <div className="fixed bottom-0 left-0 w-full z-40 bg-white border-t-4 border-black p-3 safe-bottom shadow-[0_-5px_10px_rgba(0,0,0,0.1)]">
-                            <a href={WECHAT_WORK_URL} className="flex items-center justify-between bg-neo-main text-white border-2 border-black px-4 py-3 shadow-neo hover:shadow-none hover:translate-y-1 transition-all animate-breathe-glow">
-                                <div className="flex flex-col">
-                                    <span className="font-bold text-sm leading-none">RAC 顾问在线</span>
-                                    <span className="text-[10px] font-mono opacity-90">STUDY ABROAD CONSULTING</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold bg-black px-2 py-1 animate-pulse">1v1 FREE</span>
-                                    <Icon name="message-circle" />
-                                </div>
-                            </a>
-                        </div>
-                    )}
-                </div>
-            );
-        }
+      <div style={{padding:16,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:16}}>
+        {loading ? (
+          <div style={{gridColumn:'1/-1',textAlign:'center',padding:48}}><div style={{width:40,height:40,border:'4px solid #ddd',borderTop:'4px solid #111',borderRadius:999,margin:'auto',animation:'spin 1s linear infinite'}}></div><p style={{marginTop:12}}>获取数据中...</p></div>
+        ) : filtered.length>0 ? filtered.map(item=> <NewsCard key={item.id} item={item} onOpen={(it)=>setSelected(it)} />) : (<div style={{gridColumn:'1/-1',textAlign:'center',padding:48}}>无匹配数据</div>)}
+      </div>
 
-        window.addEventListener('load', () => {
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(<MainApp />);
-        });
-    </script>
+      <div style={{padding:24,textAlign:'center',color:'#666',fontSize:12}}>POWERED BY RAC · DEMO ONLY · 不依赖第三方 API</div>
+
+      {selected && <DetailModal item={selected} onClose={()=>setSelected(null)} />}
+    </div>
+  );
+}
+
+/* Render */
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+</script>
+
 </body>
 </html>
